@@ -8,8 +8,10 @@ driver:
 lint:
   name: yamllint
 platforms:
-  - name: instance
+  - name: incipit-xenial
     box: ubuntu/xenial64
+  - name: incipit-bionic
+    box: ubuntu/bionic64
 provisioner:
   name: ansible
   lint:

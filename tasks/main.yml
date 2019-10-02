@@ -1,4 +1,13 @@
 ---
+- name: Check if evergreen autogen exists
+  stat:
+    path: /openils/bin/autogen.sh
+  register: evergreen_autogen
+- name: Fail out if Evergreen autogen doesn't exist
+  fail:
+    msg: "Evergreen doesn't seem to be installed. NCIP needs to be on an Evergreen app server."
+  when: not evergreen_autogen.stat.exists
+
 - name: Checkout current SIP code
   git:
       repo: "{{ sip_repo }}"

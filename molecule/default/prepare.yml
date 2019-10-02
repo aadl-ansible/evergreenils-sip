@@ -2,8 +2,41 @@
 - name: Prepare
   hosts: all
   gather_facts: false
+  become: true
+  vars_files:
+    - ../../defaults/main.yml
   tasks:
-    - name: Install python for Ansible
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-      become: true
-      changed_when: false
+    - name: Create install group
+      group:
+        name: "{{ opensrf_username }}"
+        gid: 3000
+        state: present
+    - name: Create install user
+      user:
+        name: "{{ opensrf_username }}"
+        group: "{{ opensrf_username }}"
+        shell: /bin/bash
+        uid: 3000
+        state: present
+    - name: create autogen directory
+      file:
+        path: '{{ opensrf_install_prefix }}/bin'
+        state: directory
+    - name: Pretend EVG is installed
+      copy:
+        content: '#Fake News'
+        dest: '{{ opensrf_install_prefix }}/bin/autogen.sh'
+    - name: Create EVG cgi-bin
+      file:
+        path: '{{ opensrf_install_prefix }}/var/cgi-bin'
+        state: directory
+        owner: "{{ opensrf_username }}"
+        group: "{{ opensrf_username }}"
+        mode: 777
+    - name: Make sure permissions are right
+      file:
+        state: directory
+        recurse: yes
+        owner: opensrf
+        group: opensrf
+        path: "{{ opensrf_install_prefix }}"
