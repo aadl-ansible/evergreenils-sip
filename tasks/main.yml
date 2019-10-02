@@ -13,5 +13,23 @@
       repo: "{{ sip_repo }}"
       dest: "{{ sip_checkout_location }}"
       version: "{{ sip_version }}"
-  become: yes
-  become_user: "{{ opensrf_username }}"
+
+- name: Create oils_sip.xml from example
+  copy:
+    remote_src: yes
+    src: "{{ opensrf_install_prefix }}/conf/oils_sip.xml.example"
+    dest: "{{ opensrf_install_prefix }}/conf/oils_sip.xml"
+    owner: opensrf
+    group: opensrf
+    mode: u=rw,g=rw,o=r
+- name: Edit oils_sip.xml file
+  blockinfile:
+    path: "{{ opensrf_install_prefix }}/conf/oils_sip.xml"
+    insertbefore: '<listeners>'
+    block: |
+      <server-params
+        min_spare_servers='1'
+        max_spare_servers='2'
+        min_servers='3'
+        max_servers='25'
+          />
