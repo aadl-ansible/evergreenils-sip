@@ -1,2 +1,8 @@
 ---
-# tasks file for .
+- name: Checkout current SIP code
+  git:
+      repo: "{{ sip_repo }}"
+      dest: "{{ sip_checkout_location }}"
+      version: "{{ sip_version }}"
+  become: yes
+  become_user: "{{ opensrf_username }}"

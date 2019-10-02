@@ -1,2 +1,10 @@
 ---
-# defaults file for .
+opensrf_install_prefix: '/openils'
+opensrf_username: opensrf
+
+sip_repo: 'git://git.evergreen-ils.org/SIPServer.git'
+sip_version: HEAD
+
+# oils_ctl.sh has this location hard coded
+# if you change you will have to change start script
+sip_checkout_location: '/opt/SIPServer'
