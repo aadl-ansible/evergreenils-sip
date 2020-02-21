@@ -3,11 +3,11 @@
 
 	<error-detect enabled="true" />
 
-  <!-- Set Net::Server::PreFork runtime parameters -->
-	<!--  <server-params
-           min_servers='1'
-           min_spare_servers='0' /> -->
-
+    <server-params
+        min_spare_servers='1'
+        max_spare_servers='2'
+        min_servers='3'
+        max_servers='25' />
 
 	<listeners>
 		<service
