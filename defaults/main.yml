@@ -8,3 +8,49 @@ sip_version: HEAD
 # oils_ctl.sh has this location hard coded
 # if you change you will have to change start script
 sip_checkout_location: '/opt/SIPServer'
+
+sip_accounts:
+  example:
+    username: 'scclient'
+    password: 'clientpwd'
+    institution: 'gapines'
+    av_format: 'EG_Legacy'
+    policy_checkin: true
+    policy_checkout: true
+    policy_renewal: true
+    policy_status_update: false
+    policy_offline: false
+    policy_timeout: 600
+    polciy_retries: 3
+    encoding: 'ascii'
+    currency: 'USD'
+    supports_magnetic_media: true
+    supports_security_inhibit: false
+    supports_offline_operation: false
+    supports_patron_status_request: true
+    supports_checkout: true
+    supports_checkin: true
+    supports_block_patron: true
+    supports_acs_status: true
+    supports_login: true
+    supports_patron_information: true
+    supports_end_patron_session: true
+    supports_fee_paid: true
+    supports_item_information: true
+    supports_item_status_update: false
+    supports_patron_enable: false
+    supports_hold: false
+    supports_renew: true
+    supports_renew_all: true
+    option_msg64_summary_datatype: 'barcode'
+    option_msg64_hold_datatype: ''
+    option_msg64_hold_items_available: false
+    option_patron_type_uses_code: false
+    option_use_sip_date_format: false
+    option_patron_calculate_recal_ok: false
+    checkin_override:
+      - 'COPY_ALERT_MESSAGE'
+      - 'COPY_BAD_STATUS'
+      - 'COPY_STATUS_MISSING'
+    checkout_override:
+      - 'COPY_ALERT_MESSAGE'
