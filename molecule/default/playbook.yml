@@ -2,4 +2,4 @@
 - name: Converge
   hosts: all
   roles:
-    - role: ansible-role-evergreen-sip
+    - role: evergreenils-sip

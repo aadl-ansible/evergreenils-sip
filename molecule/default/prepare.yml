@@ -33,6 +33,13 @@
         owner: "{{ opensrf_username }}"
         group: "{{ opensrf_username }}"
         mode: 777
+    - name: Create EVG conf directory
+      file:
+        path: '{{ opensrf_install_prefix }}/conf'
+        state: directory
+        owner: "{{ opensrf_username }}"
+        group: "{{ opensrf_username }}"
+        mode: 777
     - name: Make sure permissions are right
       file:
         state: directory
@@ -40,3 +47,8 @@
         owner: opensrf
         group: opensrf
         path: "{{ opensrf_install_prefix }}"
+    - name: Install Git
+      apt:
+        name: git
+        state: present
+        cache_valid_time: 3600
