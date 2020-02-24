@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <acsconfig xmlns="http://openncip.org/acs-config/1.0/">
 
-	<error-detect enabled="true" />
+    <error-detect enabled="true" />
 
     <server-params
         min_spare_servers='1'
@@ -9,166 +9,98 @@
         min_servers='3'
         max_servers='25' />
 
-	<listeners>
-		<service
-			port="0:8080/tcp"
-			transport="http"
-			protocol="NCIP/1.0" />
+    <listeners>
+        <service
+            port="0:8080/tcp"
+            transport="http"
+            protocol="NCIP/1.0" />
 
-		<service
-			port="8023/tcp"
-			transport="telnet"
-			protocol="SIP/1.00"
-			timeout="60" />
+        <service
+            port="8023/tcp"
+            transport="telnet"
+            protocol="SIP/1.00"
+            timeout="60" />
 
-		<service
-			port="127.0.0.1:6001/tcp"
-			transport="RAW"
-			protocol="SIP/2.00"
-			timeout="60" />
-	</listeners>
+        <service
+            port="127.0.0.1:6001/tcp"
+            transport="RAW"
+            protocol="SIP/2.00"
+            timeout="60" />
+    </listeners>
 
-	<accounts>
-		<!--
-		Fine Item Detail returned by the Patron Information Request is
-		manufacturer-specific.  We support the following formats:
-		3m,  Swyer_A, Swyer_B, and EG_Legacy (default).
-		Specify which treatment you want in the av_format attribute.
-		For example: <login id="sc" password="pwd" institution="main" av_format="3m">
-		-->
-		<login id="scclient" password="clientpwd" institution="gapines"/>
-	</accounts>
-
-	<!-- Institution tags will hold stuff used to interface to -->
-	<!-- the rest of the ILS: authentication parameters, etc.  I -->
-	<!-- don't know what yet, so it'll just be blank.  But there -->
-	<!-- needs to be one institution stanza for each institution -->
-	<!-- named in the accounts above. -->
-	<institutions>
+    <accounts>
+    {% for (key,value) in sip_accounts.items() %}
+        <login id="{{ value.username }}" password="{{ value.password }}" institution="{{ value.institution }}" av_format="{{ value.av_format }}"/>
+    {% endfor %}
+    </accounts>
 
 
-		<institution id="gapines" implementation="OpenILS::SIP">
+    <institutions>
+    {% for (key,value) in sip_accounts.items() %}
+        <institution id="{{ value.institution }}" implementation="OpenILS::SIP">
+            <policy
+                checkin="{{ value.policy_checkin }}"
+                checkout="{{ value.policy_checkout }}"
+                renewal="{{ value.policy_renewal }}"
+                status_update="{{ value.policy_status_update }}"
+                offline="{{ value.policy_offline }}"
+                timeout="{{ value.policy_timeout }}"
+                retries="{{ value.policy_retries }}"/>
 
-			<!-- This defines what actions we want to allow
-				remote clients (self-check machines) to perform -->
-			<policy
-				checkin="true"
-				checkout="true"
-				renewal="true"
-				status_update="false"
-				offline="false"
-				timeout="600"
-				retries="3"/>
+            <encoding>{{ value.encoding }}</encoding>
 
-			<!-- The default encoding defined in the SIP specification is -->
-			<!-- ASCII, which isn't great for French, Spanish, Armenian. -->
-			<!-- You can specify a different encoding here, based on the -->
-			<!-- encodings supported by your SIP client and your Encode -->
-			<!-- module; run the following command to get a list of supported -->
-			<!-- encodings: -->
-			<!--   perl -MEncode -le "print for Encode->encodings(':all')" -->
+            <implementation_config>
+                <bootstrap>{{ opensrf_install_prefix }}/conf/opensrf_core.xml</bootstrap>
+                <currency>{{ value.currency }}</currency>
+                <supports>
+                    <item name='magnetic media' value='{{ value.supports_magnetic_media }}'/>
+                    <item name='security inhibit' value='{{ value.supports_security_inhibit }}'/>
+                    <item name='offline operation' value='{{ value.supports_offline_operation }}'/>
+                    <item name='patron status request' value='{{ value.supports_patron_status_request }}'/>
+                    <item name='checkout' value='{{ value.supports_checkout }}'/>
+                    <item name='checkin' value='{{ value.supports_checkin }}'/>
+                    <item name='block patron' value='{{ value.supports_block_patron }}'/>
+                    <item name='acs status' value='{{ value.supports_acs_status }}'/>
+                    <item name='login' value='{{ value.supports_login }}'/>
+                    <item name='patron information' value='{{ value.supports_patron_information }}'/>
+                    <item name='end patron session' value='{{ value.supports_end_patron_session }}'/>
+                    <item name='fee paid' value='{{ value.supports_fee_paid }}'/>
+                    <item name='item information' value='{{ value.supports_item_information }}'/>
+                    <item name='item status update' value='{{ value.supports_item_status_update }}'/>
+                    <item name='patron enable' value='{{ value.supports_patron_enable }}'/>
+                    <item name='hold' value='{{ value.supports_hold }}'/>
+                    <item name='renew' value='{{ value.supports_renew }}'/>
+                    <item name='renew all' value='{{ value.supports_renew_all }}'/>
+                </supports>
 
-			<!-- UTF-8 is the recommended encoding if your SIP client supports it -->
-			<encoding>ascii</encoding>
-
-			<!-- implementation specific config options go here -->
-			<implementation_config>
-				<bootstrap>SYSCONFDIR/opensrf_core.xml</bootstrap>
-				<currency>USD</currency>
-
-				<!-- These defines what this SIP code has the ability to support -->
-				<supports>
-					<item name='magnetic media' value='true'/>
-					<item name='security inhibit' value='false'/>
-					<item name='offline operation' value='false'/>
-					<item name='patron status request' value='true'/>
-					<item name='checkout' value='true'/>
-					<item name='checkin' value='true'/>
-					<item name='block patron' value='true'/>
-					<item name='acs status' value='true'/>
-					<item name='login' value='true'/>
-					<item name='patron information' value='true'/>
-					<item name='end patron session' value='true'/>
-					<item name='fee paid' value='true'/>
-					<item name='item information' value='true'/>
-					<item name='item status update' value='false'/>
-					<item name='patron enable' value='false'/>
-					<item name='hold' value='false'/>
-					<item name='renew' value='true'/>
-					<item name='renew all' value='true'/>
-				</supports>
-				<options>
-					<!-- msg64, the patron information request can be
-					  made to return item barcodes by setting
-					  the option 'msg64_summary_datatype' to 'barcode'
-					  as below. Any other value, or no value at all
-					  will cause OpenILS::SIP to return the title
-					  in response to a message 64 request, which was the
-					  default behaviour in previous versions of Evergreen.
-					-->
-					<option name='msg64_summary_datatype' value='barcode' />
-
-
-                    <!--
-                        When set, holds will be returned to the SIP client as copy
-                        barcodes instead of title strings.  This is useful, in
-                        particular, for making subsequent calls for hold cancellation.
-                    -->
-                    <!--
-                    <option name='msg64_hold_datatype' value='barcode' />
-                    -->
-
-                    <!--
-                        When set, hold items details will return only available holds to the SIP client.
-                    -->
-                    <!--
-                    <option name='msg64_hold_items_available' value='true' />
-                    -->
-
-					<!--
-						If enabled, the PC field in patron-info requests will return the non-translated profile name
-					<option name='patron_type_uses_code' value='true' />
-					-->
-
-                    <!--
-                        By default, most dates use the SIP date format.  Some,
-                        like circulation due dates, use the ISO8601 date format
-                        instead.  If this setting is set to true, all dates will
-                        use the SIP date format.
-                    <option name='use_sip_date_format' value='true' />
-                    -->
-
-					<!--
-						If enabled, return the calculated value for the recall
-						flag instead of always returning not-OK
-					<option name='patron_calculate_recal_ok' value='true' />
-					-->
-
-				</options>
+                <options>
+                    <option name='msg64_summary_datatype' value='{{ value.option_msg64_summary_datatype }}' />
+                    <option name='msg64_hold_datatype' value='{{ value.option_msg64_hold_datatype }}' />
+                    <option name='msg64_hold_items_available' value='{{ value.option_msg64_hold_items_available }}' />
+                    <option name='patron_type_uses_code' value='{{ value.option_patron_type_uses_code }}' />
+                    <option name='use_sip_date_format' value='{{ value.option_use_sip_date_format }}' />
+                    <option name='patron_calculate_recal_ok' value='{{ value.option_patron_calculate_recal_ok }}' />
+                </options>
 
                 <checkin_override>
-                    <event>COPY_ALERT_MESSAGE</event>
-                    <event>COPY_BAD_STATUS</event>
-                    <event>COPY_STATUS_MISSING</event>
-                    <!--
-                    <event>COPY_STATUS_LOST</event>
-                    -->
+                {% for override in value.checkin_override %}
+                    <event>{{ override }}</event>
+                {% endfor %}
                 </checkin_override>
 
                 <checkout_override>
-                    <event>COPY_ALERT_MESSAGE</event>
+                {% for override in value.checkout_override %}
+                    <event>{{ override }}</event>
+                {% endfor %}
                 </checkout_override>
 
-                <!-- If uncommented, SIP2 checkins will capture local holds as transits, instead of marking as ready for pickup. -->
-                <!--
-                <checkin_hold_as_transit>1</checkin_hold_as_transit>
-                -->
+                <checkin_hold_as_transit>{{ value.checkin_hold_as_transit }}</checkin_hold_as_transit>
 
-			</implementation_config>
+            </implementation_config>
 
-		</institution>
-
-	</institutions>
+        </institution>
+    {% endfor %}
+    </institutions>
 </acsconfig>
 
 <!-- vim:noet:ts=4:sw=4: -->
