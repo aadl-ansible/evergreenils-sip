@@ -21,7 +21,7 @@ sip_accounts:
     policy_status_update: false
     policy_offline: false
     policy_timeout: 600
-    polciy_retries: 3
+    policy_retries: 3
     encoding: 'ascii'
     currency: 'USD'
     supports_magnetic_media: true
@@ -54,3 +54,4 @@ sip_accounts:
       - 'COPY_STATUS_MISSING'
     checkout_override:
       - 'COPY_ALERT_MESSAGE'
+    checkin_hold_as_transit: 0
