@@ -1,7 +1,7 @@
 ---
 - name: Check if evergreen autogen exists
   stat:
-    path: /openils/bin/autogen.sh
+    path: "{{ opensrf_install_prefix }}/bin/autogen.sh"
   register: evergreen_autogen
 - name: Fail out if Evergreen autogen doesn't exist
   fail:
