@@ -1,6 +1,6 @@
 ---
 opensrf_install_prefix: '/openils'
-opensrf_username: opensrf
+opensrf_system_user: 'opensrf'
 
 sip_repo: 'git://git.evergreen-ils.org/SIPServer.git'
 sip_version: HEAD

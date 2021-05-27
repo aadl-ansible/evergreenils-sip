@@ -18,6 +18,6 @@
   template:
     src: oils_sip.xml.j2
     dest: "{{ opensrf_install_prefix }}/conf/oils_sip.xml"
-    owner: opensrf
-    group: opensrf
+    owner: "{{ opensrf_system_user }}"
+    group: "{{ opensrf_system_user }}"
     mode: u=rw,g=rw,o=r
