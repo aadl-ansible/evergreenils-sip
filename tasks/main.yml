@@ -1,6 +1,6 @@
 ---
 - name: Check if evergreen autogen exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ opensrf_install_prefix }}/bin/autogen.sh"
   register: evergreen_autogen
 - name: Fail out if Evergreen autogen doesn't exist
@@ -9,13 +9,13 @@
   when: not evergreen_autogen.stat.exists
 
 - name: Checkout current SIP code
-  git:
+  ansible.builtin.git:
       repo: "{{ sip_repo }}"
       dest: "{{ sip_checkout_location }}"
       version: "{{ sip_version }}"
 
 - name: Create oils_sip.xml from template
-  template:
+  ansible.builtin.template:
     src: oils_sip.xml.j2
     dest: "{{ opensrf_install_prefix }}/conf/oils_sip.xml"
     owner: "{{ opensrf_system_user }}"
@@ -24,6 +24,6 @@
 
 - name: Add checkout location to perl environment in bashrc
   ansible.builtin.lineinfile:
-    path: "/home/{{ opensrf_system_user}}/.bashrc"
+    path: "/home/{{ opensrf_system_user }}/.bashrc"
     search_string: 'export PERL5LIB=$PERL5LIB:{{ sip_checkout_location }}'
     line: 'export PERL5LIB=$PERL5LIB:{{ sip_checkout_location }}'

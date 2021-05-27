@@ -2,7 +2,7 @@ galaxy_info:
   author: Ann Arbor District Library
   description: Evergreen ILS SIP Installer
   license: GPLv3
-  min_ansible_version: 2.4
+  min_ansible_version: 2.11
 
   platforms:
   - name: Ubuntu
