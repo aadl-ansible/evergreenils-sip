@@ -21,3 +21,9 @@
     owner: "{{ opensrf_system_user }}"
     group: "{{ opensrf_system_user }}"
     mode: u=rw,g=rw,o=r
+
+- name: Add checkout location to perl environment in bashrc
+  ansible.builtin.lineinfile:
+    path: "/home/{{ opensrf_system_user}}/.bashrc"
+    search_string: 'export PERL5LIB=$PERL5LIB:{{ sip_checkout_location }}'
+    line: 'export PERL5LIB=$PERL5LIB:{{ sip_checkout_location }}'
